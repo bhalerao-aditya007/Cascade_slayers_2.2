@@ -1,35 +1,11 @@
 {
   "version": 2,
   "cleanUrls": true,
-  "trailingSlash": false,
-  "routes": [
-    {
-      "src": "/dashboard",
-      "dest": "/UI/index.html"
-    },
-    {
-      "src": "/landing",
-      "dest": "/UI/landing.html"
-    },
-    {
-      "src": "/index.html",
-      "dest": "/UI/index.html"
-    },
-    {
-      "src": "/landing.html",
-      "dest": "/UI/landing.html"
-    },
-    {
-      "src": "/UI/(.*)",
-      "dest": "/UI/$1"
-    },
-    {
-      "src": "/",
-      "dest": "/UI/landing.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/UI/$1"
-    }
+  "rewrites": [
+    { "source": "/", "destination": "/UI/index.html" },
+    { "source": "/dashboard", "destination": "/UI/index.html" },
+    { "source": "/landing", "destination": "/UI/landing.html" },
+    { "source": "/index.html", "destination": "/UI/index.html" },
+    { "source": "/landing.html", "destination": "/UI/landing.html" }
   ]
 }
