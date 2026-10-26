@@ -139,23 +139,32 @@ class EngineState:
                     faulty_events = injector.apply_faults(clean_events, profile_name=fault_profile, seed=42)
                     raw_list = [e.model_dump(mode="json") for e in faulty_events]
 
+            import gc
             if raw_list:
                 # Subsample massive simulated streams to fit safely within 512MB RAM cloud limits (Render Free Tier)
                 if len(raw_list) > 6000:
                     stride = max(1, len(raw_list) // 5000)
                     raw_list = raw_list[::stride]
-                self._cached_events = [CanonicalEvent(**item) for item in raw_list]
+
+                def _parse_ts(val):
+                    if isinstance(val, datetime): return val
+                    if isinstance(val, str):
+                        if val.endswith('Z'): val = val[:-1] + '+00:00'
+                        return datetime.fromisoformat(val)
+                    return datetime.now(timezone.utc)
+                self._cached_raw = [(_parse_ts(item['ingest_time']), item) for item in raw_list]
                 del raw_list
-                import gc
                 gc.collect()
             else:
-                self._cached_events = []
+                self._cached_raw = []
 
-            # Ingest events up to current as_of
+            # Ingest events up to current as_of with low memory footprint
             as_of = self.clock.as_of
-            visible_events = [e for e in self._cached_events if e.ingest_time <= as_of]
+            visible_events = [CanonicalEvent(**item) for (t, item) in self._cached_raw if t <= as_of]
             if visible_events:
                 self.store.ingest(visible_events)
+                del visible_events
+                gc.collect()
 
             # Warm-start Hawkes graph with scenario expected chain
             plugin_yaml = os.path.join(self.root_dir, f"configs/plugins/{scenario_id}.yaml")
@@ -172,9 +181,10 @@ class EngineState:
             new_as_of = self.clock.as_of
 
             # Ingest newly visible events
-            new_events = [e for e in self._cached_events if old_as_of < e.ingest_time <= new_as_of]
+            new_events = [CanonicalEvent(**item) for (t, item) in self._cached_raw if old_as_of < t <= new_as_of]
             if new_events:
                 self.store.ingest(new_events)
+                del new_events
 
     def seek_clock(self, hour: int):
         with self.lock:
@@ -182,9 +192,10 @@ class EngineState:
             as_of = self.clock.as_of
             # Reload store strictly up to as_of
             self.store = AsOfStore()
-            visible_events = [e for e in self._cached_events if e.ingest_time <= as_of]
+            visible_events = [CanonicalEvent(**item) for (t, item) in self._cached_raw if t <= as_of]
             if visible_events:
                 self.store.ingest(visible_events)
+                del visible_events
 
     def get_active_zones(self) -> List[Dict[str, Any]]:
         cfg = self.city_heldout if self.active_city == "heldout_city" else self.city_mumbai

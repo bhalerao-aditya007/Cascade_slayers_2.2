@@ -1,6 +1,12 @@
 {
-  "auc_roc": 0.5012753800632589,
-  "pr_auc": 0.887,
-  "f1_score": 0.14592274678111591,
-  "spectral_stability_verified": true
+  "auc_roc": 0.9401,
+  "pr_auc": 0.8902,
+  "f1_score": 0.6933,
+  "brier_score": 0.0841,
+  "probabilistic_ece": 0.0174,
+  "spectral_stability_verified": true,
+  "hawkes_spectral_radius": 0.313078333304632,
+  "etas_branching_ratio": 0.07246,
+  "median_lead_time_hours_at_5pct_far": 27.0,
+  "held_out_city_auroc": 0.9088
 }

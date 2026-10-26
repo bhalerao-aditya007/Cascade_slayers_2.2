@@ -1,11 +1,6 @@
 {
-  "version": 2,
-  "cleanUrls": true,
-  "rewrites": [
-    { "source": "/", "destination": "/UI/index.html" },
-    { "source": "/dashboard", "destination": "/UI/index.html" },
-    { "source": "/landing", "destination": "/UI/landing.html" },
-    { "source": "/index.html", "destination": "/UI/index.html" },
-    { "source": "/landing.html", "destination": "/UI/landing.html" }
-  ]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "buildCommand": "cd UI_Updated && npm install && npm run build",
+  "outputDirectory": "UI_Updated/.next"
 }

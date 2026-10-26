@@ -34,8 +34,8 @@ class EpidemicTypeAftershockSequence:
         self.b_value = 1.0
         self.is_real_params = False
 
-        if checkpoint_path:
-            self.load_from_checkpoint(checkpoint_path)
+        # Auto-load fitted checkpoint if available
+        self.load_from_checkpoint(checkpoint_path)
 
     def load_from_checkpoint(self, checkpoint_path: Optional[str] = None) -> bool:
         """

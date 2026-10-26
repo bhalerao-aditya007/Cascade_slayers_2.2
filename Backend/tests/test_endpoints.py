@@ -1,3 +1,5 @@
+import os
+os.environ["DISABLE_TICKER"] = "1"
 import pytest
 from fastapi.testclient import TestClient
 from api.main import app

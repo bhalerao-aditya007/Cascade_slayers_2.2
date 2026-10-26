@@ -48,8 +48,8 @@ class DiscreteHawkesGLM(nn.Module):
         self.register_buffer("mask", mask)
         self.is_real_checkpoint = False
 
-        if checkpoint_path:
-            self.load_from_checkpoint(checkpoint_path)
+        # Auto-load fitted checkpoint if available
+        self.load_from_checkpoint(checkpoint_path)
 
     @property
     def mu(self) -> torch.Tensor:

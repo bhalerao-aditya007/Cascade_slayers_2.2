@@ -1,0 +1,76 @@
+{
+ "selected": {
+  "l1": 2e-05,
+  "lg": 2e-05
+ },
+ "val_nll": 0.45794439867381637,
+ "const_rate_val_nll": 0.5661446457642948,
+ "rho": 0.313078333304632,
+ "edge_metrics": {
+  "auroc": 0.7800324675324675,
+  "ap": 0.6817878112090789,
+  "f1": 0.6933333333333334,
+  "thr": 0.015008590957904624,
+  "precision": 0.5531914893617021,
+  "recall": 0.9285714285714286
+ },
+ "rho_incl_same_layer": 0.5174175883772376,
+ "baselines": [
+  {
+   "method": "Hawkes prior (ours), raw score",
+   "AUROC": 0.78,
+   "AP": 0.682
+  },
+  {
+   "method": "Hawkes, null-corrected (raw - episode-permuted null)",
+   "AUROC": 0.439,
+   "AP": 0.492
+  },
+  {
+   "method": "lagged correlation",
+   "AUROC": 0.569,
+   "AP": 0.45
+  },
+  {
+   "method": "Hawkes on circular-shifted events (null)",
+   "AUROC": 0.777,
+   "AP": 0.658
+  },
+  {
+   "method": "Hawkes on episode-permuted events (null)",
+   "AUROC": 0.831,
+   "AP": 0.683
+  },
+  {
+   "method": "random",
+   "AUROC": 0.471,
+   "AP": 0.354
+  }
+ ],
+ "lag_mae_h": 27.34533049830435,
+ "heldout": {
+  "nll_zero_shot": 0.42761961212875294,
+  "nll_const": 0.53561719268381,
+  "scratch_auroc": 0.7832792207792207,
+  "lagcorr_auroc": 0.5543831168831168
+ },
+ "rho_by_hazard": {
+  "flood": 0.3017110460653577,
+  "heat": 0.30181732740147454,
+  "grid": 0.3120518529334281,
+  "epidemic": 0.30321623286866983,
+  "quake": 0.3193328903858377,
+  "chem": 0.3046287427321587,
+  "compoundA": 0.30503581596866647,
+  "compoundB": 0.3166922741107542,
+  "none": 0.3074987098749502
+ },
+ "drift": {
+  "alarms_drifted": 0,
+  "alarms_control": 0,
+  "n_pairs": 20,
+  "median_delay_h": null,
+  "post_nll_frozen": 0.6887071349371212,
+  "post_nll_online": 0.6980436505540529
+ }
+}

@@ -31,3 +31,11 @@ Thumbs.db
 Desktop.ini
 .DS_Store
 *.tmp
+
+# Heavy local ML raw notebooks and datasets
+models 2/
+models_backup/
+Backend/runs/models_backup/
+*.webm
+*.log
+

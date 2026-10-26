@@ -39,7 +39,7 @@ async def simulation_ticker():
 async def lifespan(app: FastAPI):
     # Start background ticker on startup (disabled during test sweeps)
     task = None
-    if not os.environ.get('DISABLE_TICKER'):
+    if not os.environ.get('DISABLE_TICKER') and not os.environ.get('PYTEST_CURRENT_TEST'):
         task = asyncio.create_task(simulation_ticker())
     try:
         yield

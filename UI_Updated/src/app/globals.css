@@ -1,0 +1,314 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root,
+.dark {
+  --radius: 0.75rem;
+  --background: #050506;
+  --foreground: #f5f5f7;
+  --card: #0d0d10;
+  --card-foreground: #f5f5f7;
+  --popover: #131316;
+  --popover-foreground: #f5f5f7;
+  --primary: #f5f5f7;
+  --primary-foreground: #050506;
+  --secondary: rgba(255, 255, 255, 0.08);
+  --secondary-foreground: #f5f5f7;
+  --muted: rgba(255, 255, 255, 0.06);
+  --muted-foreground: rgba(235, 235, 245, 0.6);
+  --accent: rgba(255, 255, 255, 0.1);
+  --accent-foreground: #f5f5f7;
+  --destructive: #ff453a;
+  --border: rgba(255, 255, 255, 0.09);
+  --input: rgba(255, 255, 255, 0.14);
+  --ring: rgba(255, 255, 255, 0.35);
+  --chart-1: #30d158;
+  --chart-2: #ffd60a;
+  --chart-3: #ff9f0a;
+  --chart-4: #ff453a;
+  --chart-5: #64d2ff;
+  --sidebar: #0d0d10;
+  --sidebar-foreground: #f5f5f7;
+  --sidebar-primary: #f5f5f7;
+  --sidebar-primary-foreground: #050506;
+  --sidebar-accent: rgba(255, 255, 255, 0.08);
+  --sidebar-accent-foreground: #f5f5f7;
+  --sidebar-border: rgba(255, 255, 255, 0.09);
+  --sidebar-ring: rgba(255, 255, 255, 0.35);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "ss01" on, "cv11" on;
+  }
+  ::selection {
+    background: rgba(255, 255, 255, 0.18);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   72H WARNING — Apple pro console design system
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --c-bg: #050506;
+  --c-bg2: #0a0a0d;
+  --c-panel: rgba(255, 255, 255, 0.045);
+  --c-panel-strong: rgba(255, 255, 255, 0.07);
+  --c-hairline: rgba(255, 255, 255, 0.08);
+  --c-hairline-2: rgba(255, 255, 255, 0.14);
+  --c-ink: #f5f5f7;
+  --c-ink-2: rgba(235, 235, 245, 0.6);
+  --c-ink-3: rgba(235, 235, 245, 0.38);
+  --ok: #30d158;
+  --watch: #ffd60a;
+  --high: #ff9f0a;
+  --crit: #ff453a;
+  --info: #64d2ff;
+}
+
+/* glass */
+.glass {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.028));
+  backdrop-filter: blur(22px) saturate(1.25);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  border: 1px solid var(--c-hairline);
+  border-radius: 16px;
+}
+.glass-deep {
+  background: linear-gradient(165deg, rgba(16, 16, 20, 0.86), rgba(10, 10, 13, 0.78));
+  backdrop-filter: blur(28px) saturate(1.2);
+  -webkit-backdrop-filter: blur(28px) saturate(1.2);
+  border: 1px solid var(--c-hairline);
+}
+.hairline {
+  border-color: var(--c-hairline);
+}
+
+/* type utilities */
+.eyebrow {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--c-ink-3);
+  font-weight: 500;
+}
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" on;
+}
+
+/* data scrollbars */
+.datascroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+}
+.datascroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.datascroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.datascroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+.datascroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* soft pulsing dot */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.82); }
+}
+.pulse-soft {
+  animation: pulse-soft 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(255, 69, 58, 0.45); }
+  70% { box-shadow: 0 0 0 9px rgba(255, 69, 58, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 69, 58, 0); }
+}
+.pulse-ring {
+  animation: pulse-ring 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.04) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+/* maplibre chrome */
+.maplibregl-ctrl-attrib {
+  background: rgba(5, 5, 6, 0.5) !important;
+  color: rgba(235, 235, 245, 0.38) !important;
+  font-size: 10px !important;
+}
+.maplibregl-ctrl-attrib a {
+  color: rgba(235, 235, 245, 0.5) !important;
+}
+.maplibregl-canvas:focus {
+  outline: none;
+}
+.maplibregl-ctrl-bottom-right {
+  z-index: 2;
+}
+
+/* timeline playhead handle */
+.playhead-glow {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5), 0 0 18px rgba(255, 255, 255, 0.28);
+}
+
+/* recharts theming */
+.recharts-tooltip-cursor {
+  fill: rgba(255, 255, 255, 0.04);
+}
+.recharts-cartesian-axis-tick text {
+  fill: rgba(235, 235, 245, 0.38);
+  font-size: 10px;
+  font-family: var(--font-geist-mono), monospace;
+}
+.recharts-cartesian-grid line {
+  stroke: rgba(255, 255, 255, 0.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-soft, .pulse-ring, .shimmer { animation: none; }
+}
+
+/* ══════════════════ scroll experience additions ════════════════════════════ */
+
+/* lenis smooth scroll */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* real-boundary SVG draw-on (CityBrief) */
+@keyframes boundaryDraw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+.boundary-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: boundaryDraw 2.4s cubic-bezier(0.65, 0, 0.25, 1) forwards;
+  filter: drop-shadow(0 0 6px currentColor);
+}
+@keyframes boundaryFillIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.boundary-draw-fill {
+  opacity: 0;
+  animation: boundaryFillIn 1.2s ease 1.5s forwards;
+}
+
+/* sim caption entrance */
+@keyframes captionIn {
+  from { opacity: 0; transform: translateY(14px); filter: blur(4px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.caption-in {
+  animation: captionIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* staggered 3D reveal (forecast console rail — Codrops Staggered3DGrid feel) */
+@keyframes staggerIn {
+  from { opacity: 0; transform: perspective(1200px) translateY(26px) rotateX(7deg); }
+  to { opacity: 1; transform: perspective(1200px) translateY(0) rotateX(0deg); }
+}
+.stagger-in {
+  animation: staggerIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* 3D stacked cards (SelectStage) */
+.card-3d {
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+.card-3d article {
+  box-shadow:
+    0 30px 80px -18px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+/* glass panel used by the city brief */
+.glass-panel {
+  transform-style: preserve-3d;
+}
+
+/* globe canvas layering */
+.maplibregl-ctrl-attrib {
+  background: rgba(5, 5, 6, 0.5) !important;
+  backdrop-filter: blur(6px);
+}
+.maplibregl-ctrl-attrib a {
+  color: rgba(235, 235, 245, 0.4) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boundary-draw { animation-duration: 0.01s; animation-delay: 0s; }
+  .boundary-draw-fill { animation-duration: 0.01s; animation-delay: 0s; }
+  .caption-in, .stagger-in { animation: none; }
+}
