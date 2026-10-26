@@ -1184,6 +1184,7 @@
         <div class="pulse-dot"></div>
         <span id="lbl-mode-text">LIVE API: PROBING</span>
       </div>
+      <button type="button" class="icon-btn" id="btn-api-endpoint" title="Configure Cloud (Render) / Local Backend API URL" style="border-color: rgba(229,135,132,0.6); background: #FFFDFB; color: #8F3A41; font-weight:600;">☁️ API Endpoint</button>
       <button type="button" class="icon-btn" id="btn-toggle-explode" title="Toggle 3D Explode Layer View">Explode 3D</button>
       <button type="button" class="icon-btn" id="btn-toggle-curtain" title="Compare Baseline vs Intervened Plan Curtain">Compare</button>
       <button type="button" class="icon-btn" id="btn-toggle-grid" title="Toggle 3D Transmission Pylons & Cables">⚡ Grid</button>
@@ -3655,12 +3656,23 @@ window.MOCK_BUNDLE = {"scenarios":{"scenarios":[{"id":"flood_mithi","hazard":"fl
   // LIVE API CLIENT & UNIFIED BACKEND INTEGRATION
   // =========================================================================
   const getApiBase = () => {
-    // If running in development or served from FastAPI root, auto-detect base URL
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryApi = urlParams.get('api') || urlParams.get('api_base');
+      if (queryApi) {
+        localStorage.setItem('CASCADE_API_BASE', queryApi.replace(/\/$/, ''));
+        return queryApi.replace(/\/$/, '');
+      }
+    } catch(e) {}
+    try {
+      const saved = localStorage.getItem('CASCADE_API_BASE');
+      if (saved && saved.trim()) return saved.trim().replace(/\/$/, '');
+    } catch(e) {}
     if (window.CONFIG && window.CONFIG.API_BASE && !window.CONFIG.API_BASE.includes('mock')) {
-      return window.CONFIG.API_BASE;
+      return window.CONFIG.API_BASE.replace(/\/$/, '');
     }
     const origin = window.location.origin;
-    if (origin.includes(':8000') || origin.includes('render.com')) {
+    if (origin.includes(':8000') || origin.includes('render.com') || origin.includes('railway.app') || origin.includes('koyeb.app')) {
       return origin;
     }
     return 'http://localhost:8000';
@@ -3744,19 +3756,29 @@ window.MOCK_BUNDLE = {"scenarios":{"scenarios":[{"id":"flood_mithi","hazard":"fl
   function initBackendConnection() {
     const pill = document.getElementById('mode-status-pill');
     const lbl = document.getElementById('lbl-mode-text');
+    const btnApi = document.getElementById('btn-api-endpoint');
+    const currentBase = getApiBase();
+
+    if (btnApi) {
+      if (currentBase.includes('localhost') || currentBase.includes('127.0.0.1')) {
+        btnApi.innerHTML = '<span style="font-size:11px;">💻 Local:8000</span>';
+      } else {
+        btnApi.innerHTML = '<span style="font-size:11px;">☁️ Cloud API</span>';
+      }
+    }
 
     API.checkHealth().then(data => {
       STATE.mode = 'LIVE';
       STATE.apiConnected = true;
       if (pill) pill.classList.add('live');
       if (lbl) lbl.textContent = '🟢 LIVE API: CONNECTED';
-      showToast('Connected to live FastAPI Backend (14/14 models active)');
+      showToast(`Connected to live Backend (${data.status || 'OK'})`);
       syncBackendRisk(true);
     }).catch(err => {
       STATE.mode = 'DEMO';
       STATE.apiConnected = false;
       if (pill) pill.classList.remove('live');
-      if (lbl) lbl.textContent = '⚪ DEMO SIMULATOR';
+      if (lbl) lbl.textContent = '⚡ DEMO SIMULATOR';
     });
   }
 
@@ -4061,6 +4083,72 @@ window.MOCK_BUNDLE = {"scenarios":{"scenarios":[{"id":"flood_mithi","hazard":"fl
   }
 
   function initApp() {
+    // API Endpoint Configuration Modal (Vercel <-> Render)
+    const btnApi = document.getElementById('btn-api-endpoint');
+    const modalApi = document.getElementById('modal-api-settings');
+    const inputApi = document.getElementById('input-api-url');
+    const btnCloseApi = document.getElementById('btn-close-api-modal');
+    const btnPresetRender = document.getElementById('btn-preset-render');
+    const btnPresetLocal = document.getElementById('btn-preset-local');
+    const btnTestApi = document.getElementById('btn-test-api');
+    const btnSaveApi = document.getElementById('btn-save-api');
+    const apiTestStatus = document.getElementById('api-test-status');
+
+    if (btnApi && modalApi) {
+      btnApi.addEventListener('click', () => {
+        if (inputApi) inputApi.value = getApiBase();
+        if (apiTestStatus) apiTestStatus.textContent = `Current Base: ${getApiBase()}`;
+        modalApi.style.display = 'flex';
+      });
+      if (btnCloseApi) {
+        btnCloseApi.addEventListener('click', () => { modalApi.style.display = 'none'; });
+      }
+      modalApi.addEventListener('click', (e) => {
+        if (e.target === modalApi) modalApi.style.display = 'none';
+      });
+      if (btnPresetLocal && inputApi) {
+        btnPresetLocal.addEventListener('click', () => { inputApi.value = 'http://localhost:8000'; });
+      }
+      if (btnPresetRender && inputApi) {
+        btnPresetRender.addEventListener('click', () => { inputApi.value = 'https://cascade-slayers-backend.onrender.com'; });
+      }
+      if (btnTestApi && inputApi) {
+        btnTestApi.addEventListener('click', async () => {
+          const testUrl = (inputApi.value || '').trim().replace(/\/$/, '');
+          if (!testUrl) return;
+          apiTestStatus.textContent = 'Pinging /healthz...';
+          apiTestStatus.style.color = '#786E6A';
+          try {
+            const t0 = performance.now();
+            const res = await fetch(`${testUrl}/healthz`, { mode: 'cors' });
+            const lat = Math.round(performance.now() - t0);
+            if (res.ok) {
+              const data = await res.json();
+              apiTestStatus.textContent = `✅ Connected in ${lat}ms (${data.status || 'HEALTHY'}, scenario: ${data.scenario || 'flood'})`;
+              apiTestStatus.style.color = '#2E7D32';
+            } else {
+              apiTestStatus.textContent = `⚠️ HTTP ${res.status}: API responded with error`;
+              apiTestStatus.style.color = '#D32F2F';
+            }
+          } catch(err) {
+            apiTestStatus.textContent = `❌ Cannot reach server (${err.message}). If on Render free tier, allow ~45s to wake up.`;
+            apiTestStatus.style.color = '#D32F2F';
+          }
+        });
+      }
+      if (btnSaveApi && inputApi) {
+        btnSaveApi.addEventListener('click', () => {
+          const newUrl = (inputApi.value || '').trim().replace(/\/$/, '');
+          if (newUrl) {
+            localStorage.setItem('CASCADE_API_BASE', newUrl);
+            showToast(`API Base set to: ${newUrl}`);
+            initBackendConnection();
+          }
+          modalApi.style.display = 'none';
+        });
+      }
+    }
+
     // 1. Initialize Backend Connection
     initBackendConnection();
     initRealGisMap();
@@ -4676,5 +4764,33 @@ window.MOCK_BUNDLE = {"scenarios":{"scenarios":[{"id":"flood_mithi","hazard":"fl
       s.parentNode.insertBefore(v, s);
   })(document, 'script');
 </script>
+<!-- API Settings Modal for Vercel / Render Deployment -->
+<div id="modal-api-settings" style="display:none; position:fixed; inset:0; background:rgba(44,38,37,0.45); backdrop-filter:blur(4px); z-index:999999; align-items:center; justify-content:center;">
+  <div style="background:#FFFDFB; border:1px solid #E58784; border-radius:12px; width:480px; max-width:92vw; padding:24px; box-shadow:0 24px 48px rgba(74,48,56,0.18); font-family:var(--font-sans); color:#2C2625;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:18px;">☁️</span>
+        <h3 style="margin:0; font-size:16px; font-weight:700; color:#2C2625;">Backend API Configuration</h3>
+      </div>
+      <button type="button" id="btn-close-api-modal" style="background:none; border:none; font-size:20px; cursor:pointer; color:#786E6A; line-height:1;">&times;</button>
+    </div>
+    <p style="font-size:12px; color:#524846; margin:0 0 14px 0; line-height:1.5;">
+      Connect this <strong>Vercel frontend</strong> to your live <strong>Render backend</strong>, or switch to your local development instance.
+    </p>
+    <div style="margin-bottom:12px;">
+      <label style="display:block; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; color:#786E6A; margin-bottom:6px;">API Base URL</label>
+      <input type="text" id="input-api-url" placeholder="https://cascade-slayers-backend.onrender.com" style="width:100%; box-sizing:border-box; padding:9px 12px; font-size:12.5px; font-family:var(--font-mono); border:1px solid rgba(229,135,132,0.6); border-radius:6px; background:#F7F2EC; color:#2C2625;" />
+    </div>
+    <div style="display:flex; gap:8px; margin-bottom:14px;">
+      <button type="button" id="btn-preset-render" class="icon-btn" style="flex:1; height:32px; font-size:11.5px; border-color:rgba(229,135,132,0.4); background:#F7F2EC;">☁️ Render Preset</button>
+      <button type="button" id="btn-preset-local" class="icon-btn" style="flex:1; height:32px; font-size:11.5px; border-color:rgba(229,135,132,0.4); background:#F7F2EC;">💻 Localhost:8000</button>
+    </div>
+    <div id="api-test-status" style="font-size:11.5px; min-height:22px; margin-bottom:16px; padding:6px 10px; border-radius:4px; background:rgba(26,17,24,0.03); color:#786E6A; font-family:var(--font-mono);"></div>
+    <div style="display:flex; justify-content:flex-end; gap:8px;">
+      <button type="button" id="btn-test-api" class="icon-btn" style="height:34px; padding:0 16px; font-weight:600;">Test Ping</button>
+      <button type="button" id="btn-save-api" style="height:34px; padding:0 18px; background:#E58784; color:#FFFDFB; border:none; border-radius:6px; font-weight:600; font-size:12px; cursor:pointer; box-shadow:0 2px 6px rgba(229,135,132,0.35);">Save & Reconnect</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

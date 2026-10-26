@@ -2,6 +2,7 @@
   "version": 2,
   "name": "the-72-hour-warning",
   "cleanUrls": true,
+  "trailingSlash": false,
   "routes": [
     {
       "src": "/dashboard",
@@ -12,12 +13,20 @@
       "dest": "/landing.html"
     },
     {
+      "src": "/index.html",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/landing.html",
+      "dest": "/landing.html"
+    },
+    {
       "src": "/",
       "dest": "/landing.html"
     },
     {
       "src": "/(.*)",
-      "dest": "/"
+      "dest": "/$1"
     }
   ]
 }

@@ -12,10 +12,6 @@
       "dest": "/UI/landing.html"
     },
     {
-      "src": "/UI/(.*)",
-      "dest": "/UI/"
-    },
-    {
       "src": "/index.html",
       "dest": "/UI/index.html"
     },
@@ -24,12 +20,16 @@
       "dest": "/UI/landing.html"
     },
     {
+      "src": "/UI/(.*)",
+      "dest": "/UI/$1"
+    },
+    {
       "src": "/",
       "dest": "/UI/landing.html"
     },
     {
       "src": "/(.*)",
-      "dest": "/UI/"
+      "dest": "/UI/$1"
     }
   ]
 }
