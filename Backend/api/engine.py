@@ -140,7 +140,14 @@ class EngineState:
                     raw_list = [e.model_dump(mode="json") for e in faulty_events]
 
             if raw_list:
+                # Subsample massive simulated streams to fit safely within 512MB RAM cloud limits (Render Free Tier)
+                if len(raw_list) > 6000:
+                    stride = max(1, len(raw_list) // 5000)
+                    raw_list = raw_list[::stride]
                 self._cached_events = [CanonicalEvent(**item) for item in raw_list]
+                del raw_list
+                import gc
+                gc.collect()
             else:
                 self._cached_events = []
 
