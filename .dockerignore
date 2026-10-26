@@ -1,0 +1,17 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.coverage
+htmlcov
+.git
+.gitignore
+.env
+.DS_Store
+node_modules
+UI_Updated
+models 2
+download
+shots
+upload

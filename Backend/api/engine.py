@@ -7,9 +7,7 @@ from datetime import datetime, timezone, timedelta
 from typing import Dict, Any, List, Optional, Tuple
 import numpy as np
 import pandas as pd
-import torch
 
-from harness.paths import get_project_root
 from harness.paths import get_project_root
 from harness.schema import (
     CanonicalEvent, RiskResponse, CascadeResponse,

@@ -1,6 +1,18 @@
 from __future__ import annotations
 import asyncio
 import os
+
+# Limit CPU thread pools to prevent memory bloat on constrained cloud instances (Render 512MB RAM)
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("MKL_NUM_THREADS", "1")
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
+os.environ.setdefault("TORCH_NUM_THREADS", "1")
+try:
+    import torch
+    torch.set_num_threads(1)
+except ImportError:
+    pass
+
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
